@@ -31,11 +31,12 @@ export class CommandUpdate {
     ctx.session.order = null;
     await this.validateUser(ctx);
     try {
-      await ctx.reply(
-        `${
-          ctx.from.first_name ? ctx.from.first_name : 'Добро пожаловать'
-        }, вы присоединились к Fullfilment Assist Bot!🎉\n\nТеперь вам доступен эксклюзивный инструмент по подбору фулфилмента.\n\Нажмите "разместить заявку" и введите данные. Это быстро.`,
+      await ctx.replyWithPhoto(
+        'https://sellershub.ru/api/uploads/Privetstvie_32246ded80.png?updated_at=2023-04-29T13:41:34.693Z',
         {
+          caption: `${
+            ctx.from.first_name ? ctx.from.first_name : 'Добро пожаловать'
+          }, вы присоединились к Fullfilment Assist Bot!🎉\n\nТеперь вам доступен эксклюзивный инструмент по подбору фулфилмента.\n\Нажмите "разместить заявку" и введите данные. Это быстро.`,
           disable_notification: true,
           reply_markup: {
             one_time_keyboard: true,
