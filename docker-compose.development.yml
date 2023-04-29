@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      target: development
+    command: npm run start:dev
+    volumes:
+      - ./app:/usr/src/app
+    env_file:
+      - ./envs/.development.env
+  
+  app_db:
+    volumes:
+      - app_db-data_dev:/var/lib/postgresql/data
+
+  

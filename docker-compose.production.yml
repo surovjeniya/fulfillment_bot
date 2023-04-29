@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      target: production
+    restart: unless-stopped
+    env_file:
+      - ./envs/.production.env
+    container_name: fulfillment-assistant-bot-app
+    networks:
+      - fulfillment-assistant-bot-network
+  
+  app_db:
+    image: postgres:15-alpine
+    container_name: fulfillment-assistant-bot-app_db-production
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - app_db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    networks:
+      - fulfillment-assistant-bot-network
+  
+  adminer:
+    container_name: adminer
+    image: adminer:4
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      - app_db
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - fulfillment-assistant-bot-network
+
+  
+networks:
+  fulfillment-assistant-bot-network:
+    driver: bridge
+volumes:
+  app_db-data:
+    driver: local
+  app_db-data_dev:
+    driver: local
+
