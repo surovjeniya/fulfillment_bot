@@ -16,6 +16,7 @@ export interface TelegrafContext extends Context {
   session: {
     order: string;
   };
+  from: any;
   update: Update & {
     message: Message & {
       text?: string;

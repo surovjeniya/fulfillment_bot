@@ -87,7 +87,12 @@ export class CommandUpdate {
     try {
       await ctx.deleteMessage();
       if (ctx.session.order && ctx.session.order.length) {
-        await ctx.telegram.sendMessage(54452505, ctx.session.order);
+        await ctx.telegram.sendMessage(
+          54452505,
+          `Текст заявки: ${ctx.session.order}\nОт кого: ${
+            ctx.from.username ? ctx.from.username : ctx.from.id
+          }`,
+        );
         await ctx.reply(
           'Ваша заявка принята.В течении 10 минут с вами свяжется менеджер.',
         );
