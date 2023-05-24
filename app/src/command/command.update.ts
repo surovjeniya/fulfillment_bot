@@ -21,6 +21,8 @@ export class CommandUpdate {
         username: ctx.from.username ? ctx.from.username : null,
         utm: !!ctx.update.message.text.match(Utm.fulfillment_assistant_lending)
           ? Utm.fulfillment_assistant_lending
+          : !!ctx.update.message.text.match(Utm.registration_on_course)
+          ? Utm.registration_on_course
           : null,
       });
     }
@@ -30,28 +32,47 @@ export class CommandUpdate {
   async start(@Ctx() ctx: TelegrafContext) {
     ctx.session.order = null;
     await this.validateUser(ctx);
+
     try {
-      await ctx.replyWithPhoto(
-        'https://sellershub.ru/api/uploads/Privetstvie_32246ded80.png?updated_at=2023-04-29T13:41:34.693Z',
-        {
-          caption: `${
-            ctx.from.first_name ? ctx.from.first_name : 'Добро пожаловать'
-          }, вы присоединились к Fullfilment Assist Bot!🎉\n\nТеперь вам доступен эксклюзивный инструмент по подбору фулфилмента.\n\Нажмите "разместить заявку" и введите данные. Это быстро.`,
-          disable_notification: true,
-          reply_markup: {
-            one_time_keyboard: true,
-            force_reply: true,
-            resize_keyboard: true,
-            keyboard: [
-              [
-                {
-                  text: 'Разместить заявку',
-                },
-              ],
-            ],
+      if (!!ctx.update.message.text.match(Utm.registration_on_course)) {
+        const { username, first_name, last_name, id: telegram_id } = ctx.from;
+        // prettier-ignore
+        const message = `Регистрация на курс по ФФ\n\nTelegram_id:${telegram_id}\nИмя: ${first_name ? first_name : 'отсутствует'}\nФамилия: ${last_name ? last_name : 'отсутствует'}\nИмя пользователя: ${username ? `https://t.me/${username}` : 'отсутствует'}\nДата регистрации: ${new Date().toLocaleDateString('ru-RU', {
+          timeZone: 'Europe/Moscow',
+        })}\nВремя регистрации: ${new Date().toLocaleTimeString('ru-RU', {
+          timeZone: 'Europe/Moscow',
+        })}`;
+        await ctx.replyWithPhoto(
+          `https://sellershub.ru/api/uploads/Privetstvie_ec4726b7d5.png?updated_at=2023-05-24T10:06:24.090Z`,
+          {
+            caption: `Спасибо за регистрацию!🎉\n\nМы оповестим вас о запуске курса, чтобы вы успели приобрести обучение по самой выгодной цене⚡️.`,
           },
-        },
-      );
+        );
+
+        await ctx.telegram.sendMessage(54452505, message);
+      } else {
+        await ctx.replyWithPhoto(
+          'https://sellershub.ru/api/uploads/Privetstvie_32246ded80.png?updated_at=2023-04-29T13:41:34.693Z',
+          {
+            caption: `${
+              ctx.from.first_name ? ctx.from.first_name : 'Добро пожаловать'
+            }, вы присоединились к Fullfilment Assist Bot!🎉\n\nТеперь вам доступен эксклюзивный инструмент по подбору фулфилмента.\n\Нажмите "разместить заявку" и введите данные. Это быстро.`,
+            disable_notification: true,
+            reply_markup: {
+              one_time_keyboard: true,
+              force_reply: true,
+              resize_keyboard: true,
+              keyboard: [
+                [
+                  {
+                    text: 'Разместить заявку',
+                  },
+                ],
+              ],
+            },
+          },
+        );
+      }
     } catch (e) {
       this.logger.error('Error from start', e.message);
     }

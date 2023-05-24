@@ -7,6 +7,7 @@ import {
 
 export enum Utm {
   fulfillment_assistant_lending = 'fulfillment_assistant_lending',
+  registration_on_course = 'registration_on_course',
 }
 
 @Entity({ name: 'user' })
