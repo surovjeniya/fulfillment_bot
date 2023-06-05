@@ -50,6 +50,7 @@ export class CommandUpdate {
         );
 
         await ctx.telegram.sendMessage(54452505, message);
+        await ctx.telegram.sendMessage(5819723114, message);
       } else {
         await ctx.replyWithPhoto(
           'https://sellershub.ru/api/uploads/Privetstvie_32246ded80.png?updated_at=2023-04-29T13:41:34.693Z',
@@ -110,6 +111,12 @@ export class CommandUpdate {
       if (ctx.session.order && ctx.session.order.length) {
         await ctx.telegram.sendMessage(
           54452505,
+          `Текст заявки: ${ctx.session.order}\nОт кого: ${
+            ctx.from.username ? ctx.from.username : ctx.from.id
+          }`,
+        );
+        await ctx.telegram.sendMessage(
+          5819723114,
           `Текст заявки: ${ctx.session.order}\nОт кого: ${
             ctx.from.username ? ctx.from.username : ctx.from.id
           }`,
