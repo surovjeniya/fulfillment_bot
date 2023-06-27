@@ -20,6 +20,10 @@ const admins: {
     username: '@polina_nb',
     telegram_id: 5819723114,
   },
+  {
+    username: '@polinaibich',
+    telegram_id: 397918359,
+  },
 ];
 
 @Update()
