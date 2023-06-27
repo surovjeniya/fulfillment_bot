@@ -4,6 +4,24 @@ import { TelegrafContext } from 'src/interface/telegraf-context.interface';
 import { Utm } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/user.service';
 
+const admins: {
+  username: string;
+  telegram_id: number;
+}[] = [
+  {
+    username: '@nnaastyyaa',
+    telegram_id: 5135704563,
+  },
+  {
+    username: '@koiEugene',
+    telegram_id: 54452505,
+  },
+  {
+    username: '@polina_nb',
+    telegram_id: 5819723114,
+  },
+];
+
 @Update()
 export class CommandUpdate {
   private readonly logger = new Logger(CommandUpdate.name);
@@ -49,8 +67,9 @@ export class CommandUpdate {
           },
         );
 
-        await ctx.telegram.sendMessage(54452505, message);
-        await ctx.telegram.sendMessage(5819723114, message);
+        for await (const admin of admins) {
+          await ctx.telegram.sendMessage(admin.telegram_id, message);
+        }
       } else {
         await ctx.replyWithPhoto(
           'https://sellershub.ru/api/uploads/Privetstvie_32246ded80.png?updated_at=2023-04-29T13:41:34.693Z',
@@ -109,18 +128,14 @@ export class CommandUpdate {
     try {
       await ctx.deleteMessage();
       if (ctx.session.order && ctx.session.order.length) {
-        await ctx.telegram.sendMessage(
-          54452505,
-          `Текст заявки: ${ctx.session.order}\nОт кого: ${
-            ctx.from.username ? ctx.from.username : ctx.from.id
-          }`,
-        );
-        await ctx.telegram.sendMessage(
-          5819723114,
-          `Текст заявки: ${ctx.session.order}\nОт кого: ${
-            ctx.from.username ? ctx.from.username : ctx.from.id
-          }`,
-        );
+        for await (const admin of admins) {
+          await ctx.telegram.sendMessage(
+            admin.telegram_id,
+            `Текст заявки: ${ctx.session.order}\nОт кого: ${
+              ctx.from.username ? ctx.from.username : ctx.from.id
+            }`,
+          );
+        }
         await ctx.reply(
           'Ваша заявка принята.В течении 10 минут с вами свяжется менеджер.',
         );
