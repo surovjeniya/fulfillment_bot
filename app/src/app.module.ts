@@ -6,6 +6,7 @@ import { CommandModule } from './command/command.module';
 import * as LocalSession from 'telegraf-session-local';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { MailingModule } from './mailing/mailing.module';
 
 enum Stage {
   production = 'production',
@@ -50,6 +51,7 @@ enum Stage {
           : '../envs/.development.env',
     }),
     UserModule,
+    MailingModule,
   ],
 })
 export class AppModule {}
