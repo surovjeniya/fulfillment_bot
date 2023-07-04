@@ -3,6 +3,8 @@ import { Action, Command, Ctx, On, Update } from 'nestjs-telegraf';
 import { TelegrafContext } from 'src/interface/telegraf-context.interface';
 import { Utm } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/user.service';
+import { sellersHubApi } from 'src/utils/sellershub-api.utils';
+import * as passwordGenerator from 'generate-password';
 
 const admins: {
   username: string;
@@ -45,6 +47,8 @@ export class CommandUpdate {
           ? Utm.fulfillment_assistant_lending
           : !!ctx.update.message.text.match(Utm.registration_on_course)
           ? Utm.registration_on_course
+          : !!ctx.update.message.text.match(Utm.fast_registration)
+          ? Utm.fast_registration
           : null,
       });
     }
@@ -54,8 +58,27 @@ export class CommandUpdate {
   async start(@Ctx() ctx: TelegrafContext) {
     ctx.session.order = null;
     await this.validateUser(ctx);
-
     try {
+      if (!!ctx.update.message.text.match(Utm.fast_registration)) {
+        await ctx.reply(
+          'Для быстрой регистрации нажмите кнопку "Показать контакт".',
+          {
+            reply_markup: {
+              resize_keyboard: true,
+              one_time_keyboard: true,
+              force_reply: true,
+              keyboard: [
+                [
+                  {
+                    text: 'Показать контакт',
+                    request_contact: true,
+                  },
+                ],
+              ],
+            },
+          },
+        );
+      }
       if (!!ctx.update.message.text.match(Utm.registration_on_course)) {
         const { username, first_name, last_name, id: telegram_id } = ctx.from;
         // prettier-ignore
@@ -74,7 +97,11 @@ export class CommandUpdate {
         for await (const admin of admins) {
           await ctx.telegram.sendMessage(admin.telegram_id, message);
         }
-      } else {
+      }
+      if (
+        !ctx.update.message.text.match(Utm.fast_registration) &&
+        !ctx.update.message.text.match(Utm.registration_on_course)
+      ) {
         await ctx.replyWithPhoto(
           'https://sellershub.ru/api/uploads/Privetstvie_32246ded80.png?updated_at=2023-04-29T13:41:34.693Z',
           {
@@ -99,6 +126,44 @@ export class CommandUpdate {
       }
     } catch (e) {
       this.logger.error('Error from start', e.message);
+    }
+  }
+
+  @On('contact')
+  async contactHandler(@Ctx() ctx: TelegrafContext) {
+    try {
+      const { phone_number, user_id } = ctx.update.message.contact;
+      const password = passwordGenerator.generate({
+        length: 16,
+        symbols: false,
+        numbers: true,
+        uppercase: true,
+        lowercase: true,
+      });
+      const user = await sellersHubApi.registrationByPhoneHumber({
+        phone_number:
+          phone_number[0] === '+' ? phone_number.slice(1) : phone_number,
+        password,
+        registered_from_bot: true,
+        telegram_id: user_id,
+        username: ctx.from.username ? ctx.from.username : null,
+      });
+      if (user === 'used') {
+        await ctx.reply('Вы уже зарегестрированы.');
+      }
+      //@ts-ignore
+      if (user.jwt) {
+        await ctx.reply(
+          `Спасибо за регистрацию.\nВаши данные для входа на сайт:\nЛогин: ${
+            phone_number[0] === '+' ? phone_number.slice(1) : phone_number
+          }\nПароль: ${password}\n <a href="https://sellershub.ru">Перейти на сайт</a>`,
+          {
+            parse_mode: 'HTML',
+          },
+        );
+      }
+    } catch (e) {
+      this.logger.error(`Error from  ${this.contactHandler.name}`, e.message);
     }
   }
 

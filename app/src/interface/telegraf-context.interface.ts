@@ -1,5 +1,5 @@
 import { Context } from 'telegraf';
-import { Message, Update } from 'telegraf/typings/core/types/typegram';
+import { Contact, Message, Update } from 'telegraf/typings/core/types/typegram';
 
 export enum Step {
   one = 'one',
@@ -20,6 +20,7 @@ export interface TelegrafContext extends Context {
   update: Update & {
     message: Message & {
       text?: string;
+      contact?: Contact;
     };
   };
 }
