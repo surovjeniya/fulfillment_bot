@@ -7,6 +7,7 @@ import * as LocalSession from 'telegraf-session-local';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { MailingModule } from './mailing/mailing.module';
+import { CommandModule as CommandMailingModule } from './sellershub-mailing-bot/command/command.module';
 
 enum Stage {
   production = 'production',
@@ -16,10 +17,16 @@ enum Stage {
 @Module({
   imports: [
     CommandModule,
+    TelegrafModule.forRoot({
+      token: '6263971726:AAFnRzimJL1mEYDyjacuHUqCm3CfhtR2nwE',
+      botName: 'sellershub_mailing_bot',
+      include: [CommandMailingModule],
+    }),
     TelegrafModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
+        botName: 'sellershub_fullfilment_bot',
         middlewares: [
           new LocalSession({
             database: 'session.json',
@@ -52,6 +59,7 @@ enum Stage {
     }),
     UserModule,
     MailingModule,
+    CommandMailingModule,
   ],
 })
 export class AppModule {}

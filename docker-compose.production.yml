@@ -36,21 +36,21 @@ services:
     networks:
       - fulfillment-assistant-bot-network
   
-  adminer:
-    container_name: adminer
-    image: adminer:4
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
-    depends_on:
-      - app_db
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1G
-    networks:
-      - fulfillment-assistant-bot-network
+  # adminer:
+  #   container_name: adminer
+  #   image: adminer:4
+  #   ports:
+  #     - "8080:8080"
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - app_db
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 1G
+  #   networks:
+  #     - fulfillment-assistant-bot-network
 
   
 networks:
