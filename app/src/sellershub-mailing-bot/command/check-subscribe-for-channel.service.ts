@@ -34,6 +34,7 @@ export class CheckSubscribeForChannelService {
           'Прежде чем продолжить, подпишитесь на наши чаты.\n<i>После подписки перейдите в меню (слева в нижнем углу) и нажмите кнопку "Перезапустить бот".</i>',
           {
             disable_notification: true,
+            parse_mode: 'HTML',
             reply_markup: {
               inline_keyboard: CHATS_FOR_SUBSCRIBE.map((chat) => [
                 {
