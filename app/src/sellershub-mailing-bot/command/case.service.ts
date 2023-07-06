@@ -9,7 +9,18 @@ export class CaseService {
 
   async emptyCaseService(ctx: TelegrafContext) {
     try {
-      await ctx.reply('Empty case');
+      await ctx.reply('Наши гайды:', {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: 'Гайд по расшифровке 14-ого отчёта от Селлерсхаб',
+                url: 'https://sellershub.ru/api/uploads/order_6a1d7151c8.pdf?updated_at=2023-07-06T14:02:02.707Z',
+              },
+            ],
+          ],
+        },
+      });
     } catch (e) {
       this.logger.error(`Error from ${this.emptyCaseService.name}`, e.message);
     }
@@ -24,11 +35,20 @@ export class CaseService {
   }
   async fourteenthOrderCase(ctx: TelegrafContext) {
     try {
-      await ctx.sendDocument({
-        source:
-          'https://sellershub.ru/api/uploads/order_6a1d7151c8.pdf?updated_at=2023-07-06T14:02:02.707Z',
+      const loaderMessage = await ctx.reply('💫', {
+        disable_notification: true,
       });
-      await ctx.reply(Utm.fourteenth_order);
+      await ctx.sendDocument(
+        {
+          url: 'https://sellershub.ru/api/uploads/order_6a1d7151c8.pdf?updated_at=2023-07-06T14:02:02.707Z',
+          filename: 'Гайд по расшифровке 14-ого отчёта от Селлерсхаб.pdf',
+        },
+        {
+          caption:
+            'Держите гайд по расшифровке 14-го отчета. Узнайте, от чего зависит конверсия продаж.📈',
+        },
+      );
+      await ctx.deleteMessage(loaderMessage.message_id);
     } catch (e) {
       this.logger.error(
         `Error from ${this.fourteenthOrderCase.name}`,

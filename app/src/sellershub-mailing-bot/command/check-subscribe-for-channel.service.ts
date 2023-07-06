@@ -30,17 +30,20 @@ export class CheckSubscribeForChannelService {
       if (!membersStatus.filter((item) => !item).length) {
         return true;
       } else {
-        await ctx.reply('Прежде чем продолжить, подпишитесь на наши чаты', {
-          disable_notification: true,
-          reply_markup: {
-            inline_keyboard: CHATS_FOR_SUBSCRIBE.map((chat) => [
-              {
-                text: chat.chatTitle,
-                url: chat.chatUrl,
-              },
-            ]),
+        await ctx.reply(
+          'Прежде чем продолжить, подпишитесь на наши чаты.\n<i>После подписки перейдите в меню (слева в нижнем углу) и нажмите кнопку "Перезапустить бот".</i>',
+          {
+            disable_notification: true,
+            reply_markup: {
+              inline_keyboard: CHATS_FOR_SUBSCRIBE.map((chat) => [
+                {
+                  text: chat.chatTitle,
+                  url: chat.chatUrl,
+                },
+              ]),
+            },
           },
-        });
+        );
       }
       return false;
     } catch (e) {
