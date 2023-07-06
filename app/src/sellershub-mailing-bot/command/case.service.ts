@@ -24,6 +24,10 @@ export class CaseService {
   }
   async fourteenthOrderCase(ctx: TelegrafContext) {
     try {
+      await ctx.sendDocument({
+        source:
+          'https://sellershub.ru/api/uploads/order_6a1d7151c8.pdf?updated_at=2023-07-06T14:02:02.707Z',
+      });
       await ctx.reply(Utm.fourteenth_order);
     } catch (e) {
       this.logger.error(
