@@ -17,6 +17,10 @@ export class CaseService {
                 text: 'Гайд по расшифровке 14-ого отчёта от Селлерсхаб',
                 url: 'https://sellershub.ru/api/uploads/order_6a1d7151c8.pdf?updated_at=2023-07-06T14:02:02.707Z',
               },
+              {
+                text: 'Гайд Unit-экономике от Селлерсхаб',
+                url: 'https://sellershub.ru/api/uploads/Gajd_Yunit_ekonomika_230c9d9768.pdf?updated_at=2023-07-11T13:32:11.431Z',
+              },
             ],
           ],
         },
@@ -28,7 +32,19 @@ export class CaseService {
 
   async unitEconomicCase(ctx: TelegrafContext) {
     try {
-      await ctx.reply(Utm.unit_economic_guide);
+      const loaderMessage = await ctx.reply('💫', {
+        disable_notification: true,
+      });
+      await ctx.sendDocument(
+        {
+          url: 'https://sellershub.ru/api/uploads/Gajd_Yunit_ekonomika_230c9d9768.pdf?updated_at=2023-07-11T13:32:11.431Z',
+          filename: 'Гайд по Unit-экономике от Селлерсхаб.pdf',
+        },
+        {
+          caption: 'Держите гайд по Unit-экономике.',
+        },
+      );
+      await ctx.deleteMessage(loaderMessage.message_id);
     } catch (e) {
       this.logger.error(`Error from ${this.unitEconomicCase.name}`, e.message);
     }
