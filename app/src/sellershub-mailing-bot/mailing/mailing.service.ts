@@ -2,21 +2,21 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectBot } from 'nestjs-telegraf';
 import { TelegrafContext } from 'src/interface/telegraf-context.interface';
-import { UserEntity } from 'src/user/entity/user.entity';
-import { UserService } from 'src/user/user.service';
+import { SendMessageToUsersDto } from 'src/mailing/dto/send-message-to-users.dto';
 import { Telegraf, TelegramError } from 'telegraf';
 import { Repository } from 'typeorm';
-import { SendMessageToUsersDto } from './dto/send-message-to-users.dto';
-import { CallbackResponseText } from './entity/callback-response-text.entity';
-
+import { MailingBotUserEntity } from '../entity/mailing-bot-user.entity';
+import { SellersHubMailingBotUserService } from '../sellershub-mailing-bot.service';
+import { CallbackResponseTextEntity } from './callback-response-text.entity';
 @Injectable()
 export class MailingService {
   private readonly logger = new Logger(MailingService.name);
   constructor(
-    private readonly userService: UserService,
-    @InjectBot() private readonly bot: Telegraf<TelegrafContext>,
-    @InjectRepository(CallbackResponseText)
-    private readonly callbackResponseTextRepository: Repository<CallbackResponseText>,
+    @InjectBot('sellershub_mailing_bot')
+    private readonly bot: Telegraf<TelegrafContext>,
+    private readonly sellersHubMailingBotUserService: SellersHubMailingBotUserService,
+    @InjectRepository(CallbackResponseTextEntity)
+    private readonly callbackResponseTextRepository: Repository<CallbackResponseTextEntity>,
   ) {}
 
   asyncEachIterator(arr: any[], fn: any) {
@@ -33,15 +33,16 @@ export class MailingService {
 
   async sendMessageToUsers(dto: SendMessageToUsersDto) {
     try {
-      let callbackMessageResponse: CallbackResponseText = null;
+      let callbackMessageResponse: CallbackResponseTextEntity = null;
       if (dto.callback_response_text) {
         callbackMessageResponse = this.callbackResponseTextRepository.create({
           text: dto.callback_response_text,
         });
         await this.callbackResponseTextRepository.save(callbackMessageResponse);
       }
-      const users = await this.userService.find();
-      this.asyncEachIterator(users, (user: UserEntity, i: number) => {
+      const users = await this.sellersHubMailingBotUserService.findUsers();
+
+      this.asyncEachIterator(users, (user: MailingBotUserEntity, i: number) => {
         if (dto.image_path) {
           this.bot.telegram
             .sendPhoto(user.telegram_id, dto.image_path, {
@@ -55,7 +56,7 @@ export class MailingService {
                           text: dto.btn_text,
                           url: dto.btn_link ? dto.btn_link : null,
                           callback_data: dto.with_callback
-                            ? `mailing-update/${callbackMessageResponse.id}`
+                            ? `mailing-analytics-update/${callbackMessageResponse.id}`
                             : null,
                         },
                       ],

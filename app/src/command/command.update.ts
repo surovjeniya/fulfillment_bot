@@ -171,7 +171,6 @@ export class CommandUpdate {
   async messageHandler(@Ctx() ctx: TelegrafContext) {
     try {
       if (ctx.update.message.text.match('Разместить заявку')) {
-        await ctx.deleteMessage(ctx.update.message.message_id - 1);
         await ctx.deleteMessage();
         await ctx.reply(
           `Ответьте одним сообщением на наши вопросы:\n\n1. Категория товара, требующая обработку. Ее примерные габариты.\n2. Количество товаров и артикулов в поставке.\n3. Требуется ли забор груза? Откуда?\n4. Опишите, что необходимо сделать с товаром. Какая требуется упаковка.\n5. Система работы: FBO или FBS?\n6. Куда необходимо отправить товар?\n7. Примечания от вас: пожелания или моменты, которые хотели бы уточнить.\n8. Контакты для связи.\n`,

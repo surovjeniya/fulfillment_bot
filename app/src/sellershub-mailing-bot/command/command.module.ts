@@ -14,5 +14,6 @@ import { CommandUpdate } from './command.update';
     CheckSubscribeForChannelService,
     SellersHubMailingBotUserService,
   ],
+  exports: [SellersHubMailingBotUserService],
 })
 export class CommandModule {}

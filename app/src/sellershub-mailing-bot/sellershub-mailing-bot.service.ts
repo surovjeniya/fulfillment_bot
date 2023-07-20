@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, FindOneOptions, Repository } from 'typeorm';
+import {
+  DeepPartial,
+  FindManyOptions,
+  FindOneOptions,
+  Repository,
+} from 'typeorm';
 import { MailingBotUserEntity } from './entity/mailing-bot-user.entity';
 
 @Injectable()
@@ -17,6 +22,14 @@ export class SellersHubMailingBotUserService {
       return await this.mailingBotUserRepository.save(user);
     } catch (error) {
       this.logger.error(`Error from ${this.createUser.name}`, error.message);
+    }
+  }
+
+  async findUsers(options?: FindManyOptions<MailingBotUserEntity>) {
+    try {
+      return await this.mailingBotUserRepository.find(options);
+    } catch (error) {
+      this.logger.error(`Error from ${this.findUsers.name}`, error.message);
     }
   }
 

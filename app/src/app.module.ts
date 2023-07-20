@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { MailingModule } from './mailing/mailing.module';
 import { CommandModule as CommandMailingModule } from './sellershub-mailing-bot/command/command.module';
+import { MailingModule as AnnalisticMailingModule } from './sellershub-mailing-bot/mailing/mailing.module';
 
 enum Stage {
   production = 'production',
@@ -20,7 +21,7 @@ enum Stage {
     TelegrafModule.forRoot({
       token: '6263971726:AAFnRzimJL1mEYDyjacuHUqCm3CfhtR2nwE',
       botName: 'sellershub_mailing_bot',
-      include: [CommandMailingModule],
+      include: [CommandMailingModule, AnnalisticMailingModule],
     }),
     TelegrafModule.forRootAsync({
       inject: [ConfigService],
@@ -59,6 +60,7 @@ enum Stage {
     }),
     UserModule,
     MailingModule,
+    AnnalisticMailingModule,
     CommandMailingModule,
   ],
 })
