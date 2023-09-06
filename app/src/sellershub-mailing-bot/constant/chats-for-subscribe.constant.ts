@@ -17,9 +17,9 @@ export const CHATS_FOR_SUBSCRIBE: {
   //   chatId: '-1001874523122',
   // },
   {
-    chatTitle: 'Трекер авторекламы - Поддержка | Sellershub',
-    chatUserName: 'sellershub_support_pvz_chat',
-    chatUrl: 'https://t.me/sellershub_support_pvz_chat',
+    chatTitle: 'Трекер авторекламы | Sellershub',
+    chatUserName: 'sellershub_treker_avtoreklamy',
+    chatUrl: 'https://t.me/sellershub_treker_avtoreklamy',
     chatId: '-1001415867332',
   },
 ];
