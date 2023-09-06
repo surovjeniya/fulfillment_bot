@@ -51,6 +51,31 @@ export class CaseService {
       this.logger.error(`Error from ${this.unitEconomicCase.name}`, e.message);
     }
   }
+
+  async checkListCase(ctx: TelegrafContext) {
+    try {
+      const loaderMessage = await ctx.reply('💫', {
+        disable_notification: true,
+      });
+      await ctx.sendDocument(
+        {
+          url: 'https://sellershub.ru/api/uploads/Checklist_cc1751c3ee.pdf?updated_at=2023-09-06T13:48:59.096Z',
+          filename:
+            'Чек-лист по подготовке карточки товара Wildberries к авторекламе.pdf',
+        },
+        {
+          caption: 'Держите ваш чек-лист по подготовке карточки к авторекламе.',
+        },
+      );
+      await ctx.deleteMessage(loaderMessage.message_id);
+    } catch (e) {
+      this.logger.error(
+        `Error from ${this.fourteenthOrderCase.name}`,
+        e.message,
+      );
+    }
+  }
+
   async fourteenthOrderCase(ctx: TelegrafContext) {
     try {
       const loaderMessage = await ctx.reply('💫', {

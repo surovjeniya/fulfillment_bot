@@ -26,6 +26,9 @@ export class CommandUpdate {
   async checkCaseByUtm(ctx: TelegrafContext) {
     const utm = this.checkUtm(ctx);
     switch (utm) {
+      case Utm.checklist:
+        await this.caseService.checkListCase(ctx);
+        break;
       case Utm.fourteenth_order:
         await this.caseService.fourteenthOrderCase(ctx);
         break;
